@@ -8,3 +8,15 @@ exports.fetchAllArticles = async () => {
     return rows;
   }
 };
+
+exports.fetchArticleById = async (id) => {
+  try {
+    const { rows } = await db.query(
+      "SELECT * FROM articles WHERE article_id = $1",
+      [id]
+    );
+    return rows;
+  } catch (error) {
+    return error;
+  }
+};

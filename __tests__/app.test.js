@@ -1,11 +1,11 @@
-const db = require("../db/connection.js");
-const testData = require("../db/data/test-data/index.js");
-const { seed } = require("../db/seeds/seed.js");
 const request = require("supertest");
 const app = require("../app");
+const db = require("../db/connection.js");
+const testData = require("../db/data/test-data/index.js");
+const { seed } = require("../db/seeds/seed");
 
-// beforeEach(() => seed(testData));
-// afterAll(() => db.end());
+beforeEach(() => seed(testData));
+afterAll(() => db.end());
 
 describe("App", () => {
   describe("Invalid Endpoint", () => {
@@ -29,6 +29,23 @@ describe("App", () => {
         .expect(200)
         .then(({ body }) => {
           expect(body.message).toBe("Hello");
+        });
+    });
+  });
+
+  describe("GET /api/topics", () => {
+    test("should receive 200 ok Status and all topics", () => {
+      return request(app)
+        .get("/api/topics")
+        .expect(200)
+        .then(({ body }) => {
+          const { topics } = body;
+          topics.forEach((topic) => {
+            expect(topic).toMatchObject({
+              slug: expect.any(String),
+              description: expect.any(String),
+            });
+          });
         });
     });
   });

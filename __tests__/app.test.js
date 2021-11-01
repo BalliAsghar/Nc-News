@@ -66,21 +66,43 @@ describe("App", () => {
         });
       });
     });
-    test('Status: 400 "Bad Request" - on invalid param', () => {
-      return request(app)
-        .get("/api/articles/notavalidparam")
-        .expect(400)
-        .then(({ body }) => {
-          expect(body.message).toBe("Invalid Param");
-        });
+
+    describe("GET -  /api/articles/article_id", () => {
+      test('Status: 400 "Bad Request" - on invalid param', () => {
+        return request(app)
+          .get("/api/articles/notavalidparam")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.message).toBe("Invalid Param");
+          });
+      });
+      test('Status: 404 "Not Found" - on wrong ID', () => {
+        return request(app)
+          .get("/api/articles/1233")
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.message).toBe("No Article Found");
+          });
+      });
+      test('Status: 200 "OK" on Valid ID', () => {
+        return request(app)
+          .get("/api/articles/1")
+          .expect(200)
+          .then(({ body }) => {
+            const { Article } = body;
+            expect(Article).toMatchObject({
+              article_id: expect.any(Number),
+              title: expect.any(String),
+              body: expect.any(String),
+              votes: expect.any(Number),
+              topic: expect.any(String),
+              author: expect.any(String),
+              created_at: expect.any(String),
+              comment_count: expect.any(Number),
+            });
+          });
+      });
     });
-    test('Status: 404 "Not Found" - on wrong ID', () => {
-      return request(app)
-        .get("/api/articles/1233")
-        .expect(404)
-        .then(({ body }) => {
-          expect(body.message).toBe("No Article Found");
-        });
-    });
+    test("GET api ", () => {});
   });
 });

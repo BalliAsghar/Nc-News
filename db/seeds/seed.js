@@ -1,6 +1,5 @@
 const db = require("../connection");
 const format = require("pg-format");
-const articles = require("../data/development-data/articles");
 
 const seed = async (data) => {
   const { articleData, commentData, topicData, userData } = data;

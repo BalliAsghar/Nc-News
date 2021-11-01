@@ -2,8 +2,8 @@ const db = require("../db/connection");
 
 exports.fetchTopics = async () => {
   try {
-    const topics = await db.query("SELECT * FROM topics;");
-    return topics["rows"];
+    const { rows } = await db.query("SELECT * FROM topics;");
+    return rows;
   } catch (error) {
     return error;
   }

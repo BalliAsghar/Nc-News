@@ -49,4 +49,22 @@ describe("App", () => {
         });
     });
   });
+
+  describe("GET /api/articles", () => {
+    test("should receive 200 ok Status and all articles", async () => {
+      const { body } = await request(app).get("/api/articles").expect(200);
+      const { Articles } = body;
+      Articles.forEach((article) => {
+        expect(article).toMatchObject({
+          article_id: expect.any(Number),
+          title: expect.any(String),
+          body: expect.any(String),
+          votes: expect.any(Number),
+          topic: expect.any(String),
+          author: expect.any(String),
+          created_at: expect.any(String),
+        });
+      });
+    });
+  });
 });

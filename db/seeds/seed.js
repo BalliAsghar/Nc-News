@@ -4,11 +4,11 @@ const format = require("pg-format");
 const seed = async (data) => {
   const { articleData, commentData, topicData, userData } = data;
   try {
-    const dropDB = await db.query("DROP TABLE IF EXISTS comments;");
-    const dropReviews = await db.query("DROP TABLE IF EXISTS reviews;");
+    const dropComments = await db.query("DROP TABLE IF EXISTS comments;");
+    const dropArticles = await db.query(`DROP TABLE IF EXISTS articles;`);
     const dropUsers = await db.query("DROP TABLE IF EXISTS users;");
-    const dropCategories = await db.query("DROP TABLE IF EXISTS categories;");
-    await Promise.all([dropDB, dropReviews, dropUsers, dropCategories]);
+    const dropTopics = await db.query(`DROP TABLE IF EXISTS topics;`);
+    await Promise.all([dropComments, dropArticles, dropUsers, dropTopics]);
     console.log("Tables Removed");
 
     const topicsTable = await db.query(`CREATE TABLE topics (

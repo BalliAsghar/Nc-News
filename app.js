@@ -1,5 +1,6 @@
 const express = require("express");
 const apiRouter = require("./routers");
+const errorHandler = require("./utils/errorHandler");
 // App initialization
 const app = express();
 
@@ -13,6 +14,9 @@ app.use("/api", apiRouter);
 app.all("/*", (req, res) =>
   res.status(404).send({ message: "Invalid EndPoint" })
 );
+
+// Error Handler
+app.use(errorHandler);
 
 // Get Port
 const PORT = 9090;

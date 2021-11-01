@@ -66,5 +66,21 @@ describe("App", () => {
         });
       });
     });
+    test('Status: 400 "Bad Request" - on invalid param', () => {
+      return request(app)
+        .get("/api/articles/notavalidparam")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe("Invalid Param");
+        });
+    });
+    test('Status: 404 "Not Found" - on wrong ID', () => {
+      return request(app)
+        .get("/api/articles/1233")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.message).toBe("No Article Found");
+        });
+    });
   });
 });

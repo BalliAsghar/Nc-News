@@ -7,10 +7,12 @@ require("dotenv").config();
 const app = express();
 
 // Index Route
-app.get("/", (req, res) => res.send("Hello"));
+app.get("/", (req, res) => res.send({ message: "Hello" }));
 
 // Get Port
 const PORT = process.env.PORT || 3000;
 
 // listen Server
 app.listen(PORT, () => console.log(`App Running on Port ${PORT}`));
+
+module.exports = app;

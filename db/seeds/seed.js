@@ -1,5 +1,6 @@
 const db = require("../connection");
 const format = require("pg-format");
+const articles = require("../data/development-data/articles");
 
 const seed = async (data) => {
   const { articleData, commentData, topicData, userData } = data;
@@ -11,51 +12,39 @@ const seed = async (data) => {
     await Promise.all([dropDB, dropReviews, dropUsers, dropCategories]);
     console.log("Tables Removed");
 
-    const userTable = await db.query(`CREATE TABLE users (
-      user_id SERIAL PRIMARY KEY,
-      username VARCHAR(25) NOT NULL,
-      name VARCHAR NOT NULL,
-      avatar_url VARCHAR DEFAULT 'default_avatar_url'
+    const topicsTable = await db.query(`CREATE TABLE topics (
+      slug VARCHAR PRIMARY KEY,
+      description VARCHAR
       );`);
 
-    const topicsTable = await db.query(`CREATE TABLE topics (
-      topic_id SERIAL PRIMARY KEY,
-      slug VARCHAR(20) NOT NULL,
-      description TEXT NOT NULL
+    const userTable = await db.query(`CREATE TABLE users(
+      username VARCHAR PRIMARY KEY,
+      avatar_url VARCHAR,
+      name VARCHAR
       );`);
 
     const articlesTable = await db.query(`CREATE TABLE articles (
-        article_id SERIAL PRIMARY KEY,
-        title VARCHAR NOT NULL,
-        topic INT REFERENCES topics(topic_id) NOT NULL,
-        body TEXT NOT NULL,
-        author_id INT REFERENCES users(user_id) NOT NULL,
-        created_at DATE NOT NULL,
-        votes INT DEFAULT 0
-      );`);
+      article_id SERIAL PRIMARY KEY,
+      title VARCHAR,
+      body VARCHAR,
+      votes INT DEFAULT 0,
+      topic VARCHAR REFERENCES topics(slug),
+      author VARCHAR REFERENCES users(username),
+      created_at DATE DEFAULT CURRENT_TIMESTAMP);`);
 
     const commentsTable = await db.query(`CREATE TABLE comments (
       comment_id SERIAL PRIMARY KEY,
-      body VARCHAR NOT NULL,
-      votes INT DEFAULT 0, 
-      author_id INT REFERENCES users(user_id) NOT NULL,
-      article_id INT REFERENCES articles(article_id) NOT NULL,
-      created_at DATE NOT NULL
+      author VARCHAR REFERENCES users(username),
+      article_id INT REFERENCES articles(article_id),
+      votes INT DEFAULT 0,
+      created_at DATE DEFAULT CURRENT_TIMESTAMP,
+      body VARCHAR
     );`);
 
     await Promise.all([userTable, topicsTable, articlesTable, commentsTable]);
     console.log("Tables Created");
 
     // Insert Data
-    const usersQuery = format(
-      `INSERT INTO users (username, avatar_url, name)
-      VALUES 
-      %L
-      RETURNING *;`,
-      userData.map((user) => [user.username, user.avatar_url, user.name])
-    );
-    const insertUsers = await db.query(usersQuery);
-
     const topicQuery = format(
       `
     INSERT INTO topics (slug, description) 
@@ -66,6 +55,56 @@ const seed = async (data) => {
     );
 
     const insertTopics = await db.query(topicQuery);
+
+    const usersQuery = format(
+      `INSERT INTO users (username, avatar_url, name)
+      VALUES 
+      %L
+      RETURNING *;`,
+      userData.map((user) => [user.username, user.avatar_url, user.name])
+    );
+    const insertUsers = await db.query(usersQuery);
+
+    const articleQuery = format(
+      `INSERT INTO articles
+    (title, topic, author, body, created_at, votes)
+    VALUES
+    %L 
+    RETURNING *;`,
+      articleData.map((article) => [
+        article.title,
+        article.topic,
+        article.author,
+        article.body,
+        article.created_at,
+        article.votes,
+      ])
+    );
+    const insertArticle = await db.query(articleQuery);
+
+    const commmentQuery = format(
+      `INSERT INTO comments
+        (body, votes, author, article_id, created_at)
+      VALUES
+      %L
+      RETURNING*;`,
+      commentData.map((c) => [
+        c.body,
+        c.votes,
+        c.author,
+        c.article_id,
+        c.created_at,
+      ])
+    );
+    const insertComments = await db.query(commmentQuery);
+
+    await Promise.all([
+      insertTopics,
+      insertUsers,
+      insertArticle,
+      insertComments,
+    ]);
+    console.log("All DONE");
   } catch (error) {
     console.log(error);
   }

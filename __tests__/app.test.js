@@ -104,4 +104,33 @@ describe("App", () => {
       });
     });
   });
+
+  describe("PATCH api/article/article_id", () => {
+    test('Status: 400 "Bad Request" - on not providing vote in body', () => {
+      return request(app)
+        .patch("/api/articles/1")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe("No vote property provided");
+        });
+    });
+    test('Status: 404 "Not Found" - on wrong ID', () => {
+      return request(app)
+        .patch("/api/articles/1234")
+        .send({ inc_votes: 2 })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.message).toBe("No Article Found");
+        });
+    });
+    test('Status: 400 "Bad Request" - on invalid Id', () => {
+      return request(app)
+        .patch("/api/articles/1b3d")
+        .send({ inc_votes: 2 })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe("Invalid Id");
+        });
+    });
+  });
 });

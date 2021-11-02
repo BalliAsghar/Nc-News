@@ -68,12 +68,12 @@ describe("App", () => {
     });
 
     describe("GET -  /api/articles/article_id", () => {
-      test('Status: 400 "Bad Request" - on invalid param', () => {
+      test('Status: 400 "Bad Request" - on invalid Id', () => {
         return request(app)
-          .get("/api/articles/notavalidparam")
+          .get("/api/articles/1nt13")
           .expect(400)
           .then(({ body }) => {
-            expect(body.message).toBe("Invalid Param");
+            expect(body.message).toBe("Invalid Id");
           });
       });
       test('Status: 404 "Not Found" - on wrong ID', () => {

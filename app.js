@@ -4,6 +4,9 @@ const errorHandler = require("./utils/errorHandler");
 // App initialization
 const app = express();
 
+// JSON Parser
+app.use(express.json());
+
 // Index Route
 app.get("/", (req, res) => res.send({ message: "Hello" }));
 

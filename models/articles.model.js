@@ -1,6 +1,11 @@
 const db = require("../db/connection");
+const { fetchSlugs } = require("./topics.model");
 
-exports.fetchAllArticles = async () => {};
+exports.fetchAllArticles = async (
+  sort_by = "created_at",
+  order = "DESC",
+  topic
+) => {};
 
 exports.fetchArticleById = async (id) => {
   try {

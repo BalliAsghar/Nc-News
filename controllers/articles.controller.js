@@ -5,11 +5,14 @@ const {
 } = require("../models/articles.model");
 
 exports.getAllArticles = async (req, res, next) => {
-  fetchAllArticles()
+  const { sort_by, order, topic } = req.query;
+  fetchAllArticles(sort_by, order, topic)
     .then((Articles) => {
       res.status(200).send({ Articles });
     })
-    .catch((err) => next(err));
+    .catch((err) => {
+      next(err);
+    });
 };
 
 exports.getArticleById = async (req, res, next) => {

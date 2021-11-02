@@ -1,16 +1,6 @@
 const db = require("../db/connection");
 
-exports.fetchAllArticles = async () => {
-  try {
-    const { rows } = await db.query("SELECT * FROM articles;");
-    if (rows.length < 1) {
-      return Promise.reject({ status: 404, message: "No Articles Found" });
-    }
-    return rows;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-};
+exports.fetchAllArticles = async () => {};
 
 exports.fetchArticleById = async (id) => {
   try {

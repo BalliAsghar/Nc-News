@@ -93,7 +93,7 @@ exports.insertComment = async (id, username, body) => {
       "INSERT INTO comments(article_id ,author, body) VALUES($1,$2,$3)RETURNING *;",
       [id, username, body]
     );
-    return rows;
+    return rows[0];
   } catch (error) {
     return Promise.reject(error);
   }

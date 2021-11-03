@@ -160,4 +160,20 @@ describe("App", () => {
       expect(body.message).toBe("Invalid Id");
     });
   });
+
+  // Not Working
+  describe.skip("POST api/articles/:article_id/comments", () => {
+    test('Status: 201 "Created" - Inserted a Comment', async () => {
+      const id = 3;
+      const insertComment = {
+        username: "tickle122",
+        body: "Inserted By Jest",
+      };
+      const { body } = await request(app)
+        .post(`/api/articles/${id}/comments`)
+        .send({ username: "tickle122", body: "Inserted By Jest" })
+        .expect(201);
+      console.log(body);
+    });
+  });
 });

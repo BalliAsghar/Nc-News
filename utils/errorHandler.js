@@ -7,6 +7,8 @@ module.exports = (err, req, res, next) => {
     res.status(400).send({ message: "Invalid Id" });
   } else if (err?.code === "42703") {
     res.status(400).send({ message: "Bad Query" });
+  } else if (err?.code === "42601") {
+    res.status(400).send({ message: "Bad Query" });
   } else {
     res.status(err.status).send({ message: err.message });
   }

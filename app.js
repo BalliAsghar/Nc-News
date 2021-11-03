@@ -1,5 +1,4 @@
 const express = require("express");
-const morgan = require("morgan");
 const apiRouter = require("./routers");
 const errorHandler = require("./utils/errorHandler");
 // App initialization

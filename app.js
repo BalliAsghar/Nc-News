@@ -15,7 +15,9 @@ app.use("/api", apiRouter);
 
 // Invalid Endpoint
 app.all("/*", (req, res) =>
-  res.status(404).send({ message: "Invalid EndPoint" })
+  res.status(404).send(`<div><img alt="404" 
+  src="https://illustatus.herokuapp.com/?title=Oops,%20Page%20not%20found&fill=%234f86ed"/>
+</div`)
 );
 
 // Error Handler

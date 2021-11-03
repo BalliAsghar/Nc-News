@@ -9,7 +9,6 @@ const seed = async (data) => {
     const dropUsers = await db.query("DROP TABLE IF EXISTS users;");
     const dropTopics = await db.query(`DROP TABLE IF EXISTS topics;`);
     await Promise.all([dropComments, dropArticles, dropUsers, dropTopics]);
-    console.log("Tables Removed");
 
     const topicsTable = await db.query(`CREATE TABLE topics (
       slug VARCHAR PRIMARY KEY,
@@ -41,7 +40,6 @@ const seed = async (data) => {
     );`);
 
     await Promise.all([userTable, topicsTable, articlesTable, commentsTable]);
-    console.log("Tables Created");
 
     // Insert Data
     const topicQuery = format(

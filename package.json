@@ -29,8 +29,14 @@
   "devDependencies": {
     "@types/jest": "^27.0.2",
     "jest": "^27.3.1",
+    "jest-sorted": "^1.0.12",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.14",
     "supertest": "^6.1.6"
+  },
+  "jest": {
+    "setupFilesAfterEnv": [
+      "jest-sorted"
+    ]
   }
 }

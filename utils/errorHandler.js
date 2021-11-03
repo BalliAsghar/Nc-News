@@ -5,6 +5,8 @@ module.exports = (err, req, res, next) => {
     res.status(500).send({ message: "Database does not exist" });
   } else if (err?.code === "22P02") {
     res.status(400).send({ message: "Invalid Id" });
+  } else if (err?.code === "42703") {
+    res.status(400).send({ message: "Bad Query" });
   } else {
     res.status(err.status).send({ message: err.message });
   }

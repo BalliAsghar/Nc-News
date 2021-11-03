@@ -103,6 +103,38 @@ describe("App", () => {
           });
       });
     });
+    describe("GET - /api/article?query", () => {
+      test("Status: 200 'Ok' -  returns -  (by default) ascending date ordered articles", () => {
+        return request(app)
+          .get("/api/articles")
+          .expect(200)
+          .then(({ body }) => {
+            const { Articles } = body;
+            expect(Articles).toBeSorted("created_at");
+          });
+      });
+      test("Status: 200 'Ok' - returns sorted Articles And in ASC Order", () => {
+        const sort_by = "title";
+        const order = "ASC";
+        return request(app)
+          .get(`/api/articles`)
+          .query({ sort_by, order })
+          .expect(200)
+          .then(({ body }) => {
+            const { Articles } = body;
+            expect(Articles).toBeSortedBy("title");
+          });
+      });
+      test.only('Status 400 "Bad Request" -  returns error "bad query - invalid type"', () => {
+        return request(app)
+          .get("/api/articles?sort_by=asdads234234")
+          .expect(400)
+          .then(({ body }) => {
+            console.error(body);
+            expect(body.message).toBe("Bad Query");
+          });
+      });
+    });
   });
 
   describe("PATCH api/article/article_id", () => {

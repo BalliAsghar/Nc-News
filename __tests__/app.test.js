@@ -176,4 +176,15 @@ describe("App", () => {
       console.log(body);
     });
   });
+  describe("DELETE api/comments/comment_id", () => {
+    test('Status 204 "No Content" - Delete Comment', () => {
+      return request(app).delete("/api/comments/1").expect(204);
+    });
+    test('Status 404 "Not Found" - Comment does not exists', () => {
+      return request(app).delete("/api/comments/1123423").expect(404);
+    });
+    test('Status 400 "Bad Request" - Invalid Id', () => {
+      return request(app).delete("/api/comments/ada3q3e").expect(400);
+    });
+  });
 });

@@ -28,7 +28,7 @@ app.all("/*", (req, res) =>
 app.use(errorHandler);
 
 // Get Port
-const PORT = 9090;
+const { PORT = 9090 } = process.env;
 
 // listen Server
 app.listen(PORT, () => console.log(`App Running on Port ${PORT}`));

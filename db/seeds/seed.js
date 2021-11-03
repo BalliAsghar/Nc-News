@@ -107,4 +107,4 @@ const seed = async (data) => {
   }
 };
 
-module.exports = { seed };
+module.exports = seed;

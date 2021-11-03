@@ -8,11 +8,6 @@ const app = express();
 // JSON Parser
 app.use(express.json());
 
-// Logger
-app.use(
-  morgan(":method :url :status :res[content-length] - :response-time ms")
-);
-
 // Index Route
 app.get("/", (req, res) => res.send({ message: "Hello" }));
 

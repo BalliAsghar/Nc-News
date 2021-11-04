@@ -249,4 +249,29 @@ describe("App", () => {
       expect(body.message).toBe("Comment Not Found");
     });
   });
+
+  describe("GET - /api/comments/:comment_id", () => {
+    test('Status: 200 "Ok" - Get Comment by Id', async () => {
+      const { body } = await request(app).get("/api/comments/1").expect(200);
+      const { comment } = body;
+      expect(comment).toMatchObject({
+        comment_id: expect.any(Number),
+        author: expect.any(String),
+        article_id: expect.any(Number),
+        votes: expect.any(Number),
+        created_at: expect.any(String),
+        body: expect.any(String),
+      });
+    });
+    test('Status: 404 "Not Found" - Comment does not exist', async () => {
+      const { body } = await request(app)
+        .get("/api/comments/1123423")
+        .expect(404);
+      expect(body.message).toBe("Comment Not Found");
+    });
+    test('Status: 400 "Bad Request" - Invalid Id', async () => {
+      const { body } = await request(app).get("/api/comments/1b3d").expect(400);
+      expect(body.message).toBe("Invalid Id");
+    });
+  });
 });

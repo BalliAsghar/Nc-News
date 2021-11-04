@@ -29,3 +29,17 @@ exports.updateVote = async (id, vote) => {
     return Promise.reject(error);
   }
 };
+
+exports.fetchCommentById = async (id) => {
+  try {
+    const { rows } = await db.query(
+      'SELECT * FROM "comments" WHERE "comment_id" = $1;',
+      [id]
+    );
+    if (!rows.length)
+      return Promise.reject({ status: 404, message: "Comment Not Found" });
+    return rows[0];
+  } catch (error) {
+    return Promise.reject(error);
+  }
+};

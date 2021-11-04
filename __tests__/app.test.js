@@ -198,4 +198,23 @@ describe("App", () => {
       });
     });
   });
+
+  describe.only("GET - api/users/:username", () => {
+    test("Status: 200 'OK' - get User by Username", async () => {
+      const { body } = await request(app)
+        .get("/api/users/rogersop")
+        .expect(200);
+      const { user } = body;
+      expect(user).toMatchObject({
+        username: expect.any(String),
+        name: expect.any(String),
+        avatar_url: expect.any(String),
+      });
+    });
+
+    test("Status: 404 'Not Found' - User does not exist", async () => {
+      const { body } = await request(app).get("/api/users/balli").expect(404);
+      expect(body.message).toBe("User Not Found");
+    });
+  });
 });

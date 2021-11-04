@@ -199,7 +199,7 @@ describe("App", () => {
     });
   });
 
-  describe.only("GET - api/users/:username", () => {
+  describe("GET - api/users/:username", () => {
     test("Status: 200 'OK' - get User by Username", async () => {
       const { body } = await request(app)
         .get("/api/users/rogersop")
@@ -215,6 +215,38 @@ describe("App", () => {
     test("Status: 404 'Not Found' - User does not exist", async () => {
       const { body } = await request(app).get("/api/users/balli").expect(404);
       expect(body.message).toBe("User Not Found");
+    });
+  });
+
+  describe("PATCH - /api/comments/:comment_id", () => {
+    test('Status: 200 "Ok" - Update Vote Count', async () => {
+      const { body } = await request(app)
+        .patch("/api/comments/2")
+        .send({ inc_votes: 1 })
+        .expect(200);
+      const { comment } = body;
+      expect(comment).toMatchObject({
+        comment_id: expect.any(Number),
+        author: expect.any(String),
+        article_id: expect.any(Number),
+        votes: expect.any(Number),
+        created_at: expect.any(String),
+        body: expect.any(String),
+      });
+    });
+    test('Status: 400 "Bad Request" - Invalid Id', async () => {
+      const { body } = await request(app)
+        .patch("/api/comments/1b3d")
+        .send({ inc_votes: 2 })
+        .expect(400);
+      expect(body.message).toBe("Invalid Id");
+    });
+    test('Status: 404 "Not Found" - Comment does not exist', async () => {
+      const { body } = await request(app)
+        .patch("/api/comments/1123423")
+        .send({ inc_votes: 2 })
+        .expect(404);
+      expect(body.message).toBe("Comment Not Found");
     });
   });
 });

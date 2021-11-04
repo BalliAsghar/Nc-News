@@ -101,7 +101,6 @@ const seed = async (data) => {
       insertArticle,
       insertComments,
     ]);
-    console.log("All DONE");
   } catch (error) {
     console.log(error);
   }

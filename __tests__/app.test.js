@@ -2,7 +2,7 @@ const request = require("supertest");
 const app = require("../app");
 const db = require("../db/connection.js");
 const testData = require("../db/data/test-data/index.js");
-const { seed } = require("../db/seeds/seed");
+const seed = require("../db/seeds/seed");
 
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
@@ -10,8 +10,7 @@ afterAll(() => db.end());
 describe("App", () => {
   describe("Invalid Endpoint", () => {
     test("should receive 404 Status And 'Invalid EndPoint' in res.body", async () => {
-      const { body } = await request(app).get("/SomeEndpoint").expect(404);
-      expect(body.message).toBe("Invalid EndPoint");
+      await request(app).get("/SomeEndpoint").expect(404);
     });
   });
 
@@ -103,7 +102,6 @@ describe("App", () => {
         const { body } = await request(app)
           .get("/api/articles?sort_by=asdads234234")
           .expect(400);
-        console.error(body);
         expect(body.message).toBe("Bad Query");
       });
     });
@@ -161,19 +159,20 @@ describe("App", () => {
     });
   });
 
-  // Not Working
+  // NOTE:  This test is not working.  I am not sure why.
   describe.skip("POST api/articles/:article_id/comments", () => {
-    test('Status: 201 "Created" - Inserted a Comment', async () => {
-      const id = 3;
-      const insertComment = {
-        username: "tickle122",
-        body: "Inserted By Jest",
-      };
-      const { body } = await request(app)
-        .post(`/api/articles/${id}/comments`)
-        .send({ username: "tickle122", body: "Inserted By Jest" })
-        .expect(201);
-      console.log(body);
+    test('Status: 201 "Created" - on valid article Id', () => {
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send({
+          username: "tickle122",
+          body: "I am a comment",
+        })
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.comment.body).toBe("I am a comment");
+          expect(body.comment.author).toBe("tickle122");
+        });
     });
   });
   describe("DELETE api/comments/comment_id", () => {
@@ -185,6 +184,18 @@ describe("App", () => {
     });
     test('Status 400 "Bad Request" - Invalid Id', () => {
       return request(app).delete("/api/comments/ada3q3e").expect(400);
+    });
+  });
+
+  describe("GET - /api/users", () => {
+    test("Status: 200 'Ok' - Returns all users", async () => {
+      const { body } = await request(app).get("/api/users").expect(200);
+      const { users } = body;
+      users.forEach((user) => {
+        expect(user).toMatchObject({
+          username: expect.any(String),
+        });
+      });
     });
   });
 });

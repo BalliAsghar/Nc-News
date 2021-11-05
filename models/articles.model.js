@@ -4,8 +4,11 @@ const { fetchSlugs } = require("./topics.model");
 exports.fetchAllArticles = async (
   sort_by = "created_at",
   order = "DESC",
-  topic
+  topic,
+  limit = 10,
+  p = 1
 ) => {
+  const offset = (p - 1) * limit;
   try {
     const getSlugs = await fetchSlugs();
     const topics = getSlugs.map((e) => e.slug);
@@ -18,11 +21,13 @@ exports.fetchAllArticles = async (
     let query = `SELECT articles.article_id, articles.title, articles.author, articles.topic, articles.created_at, articles.votes, COUNT(comments.article_id)::Int AS comment_count FROM articles
     LEFT JOIN comments ON articles.article_id = comments.article_id`;
     if (topic === undefined) {
-      query += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order};`;
+      query += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order}`;
     } else {
-      query += ` WHERE articles.topic = '${topic}' GROUP BY articles.article_id ORDER BY ${sort_by} ${order};`;
+      query += ` WHERE articles.topic = '${topic}' GROUP BY articles.article_id ORDER BY ${sort_by} ${order}`;
     }
-    const { rows } = await db.query(query);
+    query += ` LIMIT $1`;
+    query += ` OFFSET $2`;
+    const { rows } = await db.query(query, [limit, offset]);
     return rows;
   } catch (error) {
     return Promise.reject(error);

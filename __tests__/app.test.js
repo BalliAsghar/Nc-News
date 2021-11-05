@@ -157,6 +157,37 @@ describe("App", () => {
           .expect(400);
         expect(body.message).toBe("Invalid Id");
       });
+      test("Status: 200 'Ok' - returns 5 comments by default", async () => {
+        const { body } = await request(app)
+          .get("/api/articles/1/comments")
+          .expect(200);
+        const { comments } = body;
+        expect(comments.length).toBe(5);
+      });
+      test("Status: 200 'Ok' - returns the correct number of comments when given a limit", async () => {
+        const { body } = await request(app)
+          .get("/api/articles/1/comments")
+          .query({ limit: 2 })
+          .expect(200);
+        const { comments } = body;
+        expect(comments.length).toBe(2);
+      });
+      test("Status: 200 'Ok' - returns empty array if no comments", async () => {
+        const { body } = await request(app)
+          .get("/api/articles/1/comments")
+          .query({ p: 4 })
+          .expect(200);
+        const { comments } = body;
+        expect(comments.length).toBe(0);
+      });
+      test("Status: 200 'Ok' - returns correct numbers of comment when using both limit and p", async () => {
+        const { body } = await request(app)
+          .get("/api/articles/1/comments")
+          .query({ limit: 2, p: 2 })
+          .expect(200);
+        const { comments } = body;
+        expect(comments.length).toBe(2);
+      });
     });
   });
 

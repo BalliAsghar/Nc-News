@@ -76,13 +76,14 @@ exports.updateVoteArticleById = async (id, vote) => {
   }
 };
 
-exports.fetchArticleComments = async (id) => {
+exports.fetchArticleComments = async (id, limit = 5, p = 1) => {
+  const offset = (p - 1) * limit;
   try {
     const article = await this.fetchArticleById(id);
     if (article.status === 404) return Promise.reject(article);
     const { rows } = await db.query(
-      "SELECT * FROM comments Where article_id = $1",
-      [id]
+      "SELECT * FROM comments Where article_id = $1 LIMIT $2 OFFSET $3",
+      [id, limit, offset]
     );
     return rows;
   } catch (error) {

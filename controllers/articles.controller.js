@@ -39,7 +39,8 @@ exports.patchArticleById = async (req, res, next) => {
 
 exports.getArticleComments = (req, res, next) => {
   const { article_id: id } = req.params;
-  fetchArticleComments(id)
+  const { limit, p } = req.query;
+  fetchArticleComments(id, limit, p)
     .then((comments) => {
       res.status(200).send({ comments });
     })

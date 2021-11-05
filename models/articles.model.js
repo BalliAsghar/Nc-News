@@ -1,5 +1,6 @@
 const db = require("../db/connection");
 const { fetchSlugs } = require("./topics.model");
+const { fetchUser } = require("./users.model");
 
 exports.fetchAllArticles = async (
   sort_by = "created_at",
@@ -93,11 +94,19 @@ exports.fetchArticleComments = async (id, limit = 5, p = 1) => {
 
 exports.insertComment = async (id, username, body) => {
   try {
+    if (username === undefined || body === undefined) {
+      return Promise.reject({
+        status: 400,
+        message: "Please provide both username and body",
+      });
+    }
     const article = await this.fetchArticleById(id);
     if (article.status === 404) return Promise.reject(article);
+    const user = await fetchUser(username);
+    if (user.status === 404) return Promise.reject(user);
     const { rows } = await db.query(
-      "INSERT INTO comments(article_id ,author, body) VALUES($1,$2,$3)RETURNING *;",
-      [id, username, body]
+      "INSERT INTO comments (article_id ,author, body) VALUES($1,$2,$3)RETURNING *;",
+      [article.article_id, username, body]
     );
     return rows[0];
   } catch (error) {

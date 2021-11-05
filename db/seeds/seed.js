@@ -80,17 +80,20 @@ const seed = async (data) => {
     const insertArticle = await db.query(articleQuery);
 
     const commmentQuery = format(
-      `INSERT INTO comments
-        (body, votes, author, article_id, created_at)
-      VALUES
-      %L
-      RETURNING*;`,
-      commentData.map((c) => [
-        c.body,
-        c.votes,
-        c.author,
-        c.article_id,
-        c.created_at,
+      `INSERT INTO comments (
+        author,
+        article_id,
+        votes,
+        created_at,
+        body
+      )
+      VALUES %L RETURNING * ;`,
+      commentData.map((item) => [
+        item.author,
+        item.article_id,
+        item.votes,
+        item.created_at,
+        item.body,
       ])
     );
     const insertComments = await db.query(commmentQuery);

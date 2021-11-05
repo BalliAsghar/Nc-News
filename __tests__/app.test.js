@@ -212,20 +212,61 @@ describe("App", () => {
     });
   });
 
-  // NOTE:  This test is not working.  I am not sure why.
-  describe.skip("POST api/articles/:article_id/comments", () => {
-    test('Status: 201 "Created" - on valid article Id', () => {
-      return request(app)
+  describe("POST api/articles/:article_id/comments", () => {
+    test('Status: 201 "Created" - on valid article Id', async () => {
+      const { body } = await request(app)
         .post("/api/articles/1/comments")
         .send({
-          username: "tickle122",
+          username: "rogersop",
           body: "I am a comment",
         })
-        .expect(201)
-        .then(({ body }) => {
-          expect(body.comment.body).toBe("I am a comment");
-          expect(body.comment.author).toBe("tickle122");
-        });
+        .expect(201);
+      expect(body.comment).toMatchObject({
+        comment_id: expect.any(Number),
+        author: expect.any(String),
+        article_id: expect.any(Number),
+        votes: expect.any(Number),
+        created_at: expect.any(String),
+        body: expect.any(String),
+      });
+    });
+    test('Status: 400 "Bad Request" - on not providing username', async () => {
+      const { body } = await request(app)
+        .post("/api/articles/1/comments")
+        .send({
+          body: "I am a comment",
+        })
+        .expect(400);
+      expect(body.message).toBe("Please provide both username and body");
+    });
+    test('Status: 400 "Bad Request" - on not providing body', async () => {
+      const { body } = await request(app)
+        .post("/api/articles/1/comments")
+        .send({
+          username: "rogersop",
+        })
+        .expect(400);
+      expect(body.message).toBe("Please provide both username and body");
+    });
+    test('Status: 404 "Not Found" - on wrong article Id', async () => {
+      const { body } = await request(app)
+        .post("/api/articles/1234/comments")
+        .send({
+          username: "rogersop",
+          body: "I am a comment",
+        })
+        .expect(404);
+      expect(body.message).toBe("No Article Found");
+    });
+    test('Status: 400 "Bad Request" - on invalid article Id', async () => {
+      const { body } = await request(app)
+        .post("/api/articles/1b3d/comments")
+        .send({
+          username: "rogersop",
+          body: "I am a comment",
+        })
+        .expect(400);
+      expect(body.message).toBe("Invalid Id");
     });
   });
   describe("DELETE api/comments/comment_id", () => {

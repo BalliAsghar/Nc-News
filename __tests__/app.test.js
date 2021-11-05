@@ -104,6 +104,28 @@ describe("App", () => {
           .expect(400);
         expect(body.message).toBe("Bad Query");
       });
+      test("Status: 200 'Ok' - returns 10 articles by default", async () => {
+        const { body } = await request(app).get("/api/articles").expect(200);
+        const { Articles } = body;
+        expect(Articles.length).toBe(10);
+      });
+      test("Status: 200 'Ok' - returns the correct number of articles", async () => {
+        const { body } = await request(app)
+          .get("/api/articles")
+          .query({ p: 2 })
+          .expect(200);
+        const { Articles } = body;
+        expect(Articles.length).toBe(2);
+      });
+      test("Status: 200 'Ok' - p = 3 Should return empty Array", async () => {
+        const p = 3;
+        const { body } = await request(app)
+          .get("/api/articles")
+          .query({ p })
+          .expect(200);
+        const { Articles } = body;
+        expect(Articles.length).toBe(0);
+      });
     });
 
     describe("GET - api/:article_id/comments", () => {

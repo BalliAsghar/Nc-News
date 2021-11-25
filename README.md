@@ -2,7 +2,7 @@
 
 **Api Built with ExpressJS & PSQL**
 
-**_[Interact with api](https://balli-nc-news.herokuapp.com/)_**
+**_[Interact with api](https://nc-news-200.herokuapp.com/)_**
 
 ## Summary
 
